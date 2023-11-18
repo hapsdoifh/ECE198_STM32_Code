@@ -38,7 +38,7 @@ extern SPI_HandleTypeDef SPIhandler;
 
 // GPIO definition
 #define ADXLCS_Pin GPIO_PIN_6
-#define ADXLCS_GPIO_Port GPIOC
+#define ADXLCS_GPIO_Port GPIOB
 
 
 // Registers' Address 
