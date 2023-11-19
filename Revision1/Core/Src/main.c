@@ -21,6 +21,7 @@
 #include "ssd1306.h"
 #include <stdio.h>
 #include "ADXL.h"
+#include <stdlib.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -49,7 +50,7 @@ SPI_HandleTypeDef hspi1;
 
 /* USER CODE BEGIN PV */
 
-static ADXL_InitTypeDef InitInf = {.SPIMode = 0, .Range = 3, .Resolution = 0, .Rate = 8, .Justify = 0};
+static ADXL_InitTypeDef InitInf = {.SPIMode = 0, .Range = 3, .Resolution = 1, .Rate = 8, .Justify = 0};
 
 /* USER CODE END PV */
 
@@ -114,7 +115,7 @@ int main(void)
 	int16_t data[3] = {0,0,0};
 	ADXL_getAccel(data,OUTPUT_SIGNED);
 	//sprintf(oledOut, "%d,%d,%d", data[0]/255,data[1]/255,data[2]/255);
-	sprintf(oledOut, "%d,%d,%d", data[0]*100/31,data[1]*100/31,data[2]*100/31);
+	sprintf(oledOut, "%d.%d,%d.%d,%d.%d", data[0]*100/255/100,abs(data[0]*100/255%100),data[1]*100/255/100,abs(data[1]*100/255%100),data[2]*100/255/100,abs(data[2]*100/255%100));
 	ssd1306_Fill(0x00);
 	ssd1306_SetCursor(5,5);
 	ssd1306_WriteString(oledOut,Font_7x10,0x01);
