@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include "ADXL.h"
 #include <stdlib.h>
+#include <math.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -115,9 +116,14 @@ int main(void)
 	int16_t data[3] = {0,0,0};
 	ADXL_getAccel(data,OUTPUT_SIGNED);
 	//sprintf(oledOut, "%d,%d,%d", data[0]/255,data[1]/255,data[2]/255);
-	sprintf(oledOut, "%d.%d,%d.%d,%d.%d", data[0]*100/255/100,abs(data[0]*100/255%100),data[1]*100/255/100,abs(data[1]*100/255%100),data[2]*100/255/100,abs(data[2]*100/255%100));
+
 	ssd1306_Fill(0x00);
 	ssd1306_SetCursor(5,5);
+	sprintf(oledOut, "X:%d.%d,Y:%d.%d", data[0]*100/255/100,abs(data[0]*100/255%100),data[1]*100/255/100,abs(data[1]*100/255%100));
+	ssd1306_WriteString(oledOut,Font_7x10,0x01);
+	int temp = (int)sqrt((data[0]*data[0]+data[1]*data[1]+data[2]*data[2])/255/255);
+	sprintf(oledOut, "Z:%d.%d, Mag:%d.%d",data[2]*100/255/100,abs(data[2]*100/255%100), temp*100/100, abs(temp*100/255%100));
+	ssd1306_SetCursor(5,15);
 	ssd1306_WriteString(oledOut,Font_7x10,0x01);
 	ssd1306_UpdateScreen();
 
