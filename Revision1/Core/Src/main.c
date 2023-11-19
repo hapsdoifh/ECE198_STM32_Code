@@ -49,7 +49,7 @@ SPI_HandleTypeDef hspi1;
 
 /* USER CODE BEGIN PV */
 
-static ADXL_InitTypeDef InitInf = {.SPIMode = 1, .Range = 3, .Resolution = 1};
+static ADXL_InitTypeDef InitInf = {.SPIMode = 0, .Range = 3, .Resolution = 0, .Rate = 8, .Justify = 0};
 
 /* USER CODE END PV */
 
@@ -111,11 +111,11 @@ int main(void)
   char oledOut[50];
   while (1)
   {
-	int16_t data[4] = {0,0,0};
+	int16_t data[3] = {0,0,0};
 	ADXL_getAccel(data,OUTPUT_SIGNED);
-	sprintf(oledOut, "%d,%d,%d", data[0]/255,data[1]/255,data[2]/255);
-	//sprintf(oledOut, "%d,%d,%d", !data[0]+1,!data[1]+1,!data[2]+1);
-	//ssd1306_Fill(0x00);
+	//sprintf(oledOut, "%d,%d,%d", data[0]/255,data[1]/255,data[2]/255);
+	sprintf(oledOut, "%d,%d,%d", data[0]*100/31,data[1]*100/31,data[2]*100/31);
+	ssd1306_Fill(0x00);
 	ssd1306_SetCursor(5,5);
 	ssd1306_WriteString(oledOut,Font_7x10,0x01);
 	ssd1306_UpdateScreen();
@@ -225,12 +225,12 @@ static void MX_SPI1_Init(void)
   /* SPI1 parameter configuration*/
   hspi1.Instance = SPI1;
   hspi1.Init.Mode = SPI_MODE_MASTER;
-  hspi1.Init.Direction = SPI_DIRECTION_1LINE;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
   hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

@@ -218,7 +218,7 @@ adxlStatus ADXL_Init(ADXL_InitTypeDef * adxl)
 			readRegister(POWER_CTL,&reg,1);
 			if ( (adxl->AutoSleep) == AUTOSLEEPON) reg |= (1 << 4); else reg &= ~(1 << 4);
 			if ( (adxl->LinkMode) == LINKMODEON) reg |= (1 << 5); else reg &= ~(1 << 5);
-			writeRegister(POWER_CTL,reg);
+			writeRegister(POWER_CTL,reg|0b1000);
 			
 	return ADXL_OK;
 	
