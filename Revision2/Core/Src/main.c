@@ -18,7 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "ssd1306.h"
+#include <stdio.h>
+#include "ADXL.h"
+#include <stdlib.h>
+#include <math.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -67,6 +71,7 @@ static void MX_SPI1_Init(void);
   * @brief  The application entry point.
   * @retval int
   */
+int impactIndex = 0;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -132,10 +137,14 @@ int main(void)
 		ssd1306_SetCursor(5,15);
 		sprintf(oledOut, "Z:%d.%d, Mag:%d.%d",data[2]*100/255/100,abs(data[2]*100/255%100), temp*100/100, abs(temp*100/255%100));
 		ssd1306_WriteString(oledOut,Font_7x10,0x01);
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
 		ssd1306_UpdateScreen();
 	}else{
 		sprintf(oledOut, "Mag:%d.%d", ImpactList[impactIndex]*100/100, abs(ImpactList[impactIndex]*100/255%100));
 		ssd1306_WriteString(oledOut,Font_7x10,0x01);
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
 		ssd1306_UpdateScreen();
 	}
     /* USER CODE END WHILE */
