@@ -75,8 +75,8 @@ all: main-build
 main-build: Fall_Detector.elf secondary-outputs
 
 # Tool invocations
-Fall_Detector.elf Fall_Detector.map: $(OBJS) $(USER_OBJS) D:\ECE198\ECE198_STM32_Code\Revision2\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "Fall_Detector.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\ECE198\ECE198_STM32_Code\Revision2\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Fall_Detector.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+Fall_Detector.elf Fall_Detector.map: $(OBJS) $(USER_OBJS) H:\UW\ term\ 1\ECE198\ECE198_STM32_Code\Revision2\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "Fall_Detector.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"H:\UW term 1\ECE198\ECE198_STM32_Code\Revision2\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Fall_Detector.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

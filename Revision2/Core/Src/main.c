@@ -23,6 +23,8 @@
 #include "ADXL.h"
 #include <stdlib.h>
 #include <math.h>
+int impactIndex = 0;
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -71,7 +73,6 @@ static void MX_SPI1_Init(void);
   * @brief  The application entry point.
   * @retval int
   */
-int impactIndex = 0;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -125,7 +126,7 @@ int main(void)
 	ssd1306_Fill(0x00);
 	ssd1306_SetCursor(5,5);
 	int temp = (int)sqrt((data[0]*data[0]+data[1]*data[1]+data[2]*data[2])/255/255);
-	if(temp > 2){
+	if(temp > 4){
 		impact = 1;
 		ImpactList = realloc(ImpactList, sizeof(int)*size);
 		ImpactList[size-1] = temp;
@@ -137,14 +138,20 @@ int main(void)
 		ssd1306_SetCursor(5,15);
 		sprintf(oledOut, "Z:%d.%d, Mag:%d.%d",data[2]*100/255/100,abs(data[2]*100/255%100), temp*100/100, abs(temp*100/255%100));
 		ssd1306_WriteString(oledOut,Font_7x10,0x01);
-		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_RESET);
 		ssd1306_UpdateScreen();
 	}else{
-		sprintf(oledOut, "Mag:%d.%d", ImpactList[impactIndex]*100/100, abs(ImpactList[impactIndex]*100/255%100));
+		sprintf(oledOut, "IMPACT DETECTED");
 		ssd1306_WriteString(oledOut,Font_7x10,0x01);
-		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_SET);
+		ssd1306_SetCursor(5,15);
+		if(impactIndex >= size-1){
+			impactIndex = 0;
+		}
+		sprintf(oledOut, "#%d, Mag:%d.%d m/s2", impactIndex+1, ImpactList[impactIndex]*100/100, abs(ImpactList[impactIndex]*100/255%100));
+		ssd1306_WriteString(oledOut,Font_7x10,0x01);
 		ssd1306_UpdateScreen();
 	}
     /* USER CODE END WHILE */
@@ -294,18 +301,18 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin : PC13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
   /*Configure GPIO pins : PC0 PC1 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PB1 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PB6 */
   GPIO_InitStruct.Pin = GPIO_PIN_6;
@@ -315,8 +322,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
